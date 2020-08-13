@@ -48,6 +48,8 @@ class DQNController:
         x = layers.Dense(20, activation='tanh', kernel_initializer='he_uniform')(x)
         x = layers.Dense(20, activation='tanh', kernel_initializer='he_uniform')(x)
         x = layers.Dense(20, activation='tanh', kernel_initializer='he_uniform')(x)
+        x = layers.Dense(20, activation='tanh', kernel_initializer='he_uniform')(x)
+        x = layers.Dense(20, activation='tanh', kernel_initializer='he_uniform')(x)
         output_tensor = layers.Dense(self.action_size, activation='relu', kernel_initializer='he_uniform')(x)
 
         model = models.Model(inputs=input_tensor, outputs=output_tensor)
