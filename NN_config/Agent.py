@@ -7,13 +7,9 @@ from keras import layers
 
 # 카트폴 예제에서의 DQN 에이전트
 class DQNController:
-    def __init__(self, state_size, action_size, load_flag):
+    def __init__(self, state_size, action_size):
         self.render = False
-        self.load_model = load_flag
-        if self.load_model:
-            self.epsilon = 1.0
-        else:
-            self.epsilon = 1.0
+        self.epsilon = 1.0
 
         # 상태와 행동의 크기 정의
         self.state_size = state_size
@@ -37,17 +33,13 @@ class DQNController:
         # 타깃 모델 초기화
         self.update_target_model()
 
-        if self.load_model:
-            # self.model.load_weights("./save_model/DQNPsi30v3.h5")
-            self.model.load_weights("./save_model/DQNPsi10v8.h5")
-
     # 상태가 입력, 큐함수가 출력인 인공신경망 생성
     def build_model(self):
         input_tensor = layers.Input(shape=(self.state_size, ))
-        x = layers.Dense(40, activation='tanh', kernel_initializer='he_uniform')(input_tensor)
-        x = layers.Dense(40, activation='tanh', kernel_initializer='he_uniform')(x)
-        x = layers.Dense(40, activation='tanh', kernel_initializer='he_uniform')(x)
-        x = layers.Dense(40, activation='tanh', kernel_initializer='he_uniform')(x)
+        x = layers.Dense(40, activation='relu', kernel_initializer='he_uniform')(input_tensor)
+        x = layers.Dense(40, activation='relu', kernel_initializer='he_uniform')(x)
+        x = layers.Dense(40, activation='relu', kernel_initializer='he_uniform')(x)
+        x = layers.Dense(40, activation='relu', kernel_initializer='he_uniform')(x)
         output_tensor = layers.Dense(self.action_size, activation='relu', kernel_initializer='he_uniform')(x)
 
         model = models.Model(inputs=input_tensor, outputs=output_tensor)

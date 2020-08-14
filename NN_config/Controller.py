@@ -30,12 +30,10 @@ Blue_States[7] = 10000                   # Altitude
 EPISODES = 500
 Epoch = 10
 scores, episodes = [], []
-load_flag = False
-Agent = DQNController(4, 6, load_flag)
+Agent = DQNController(4, 6)
 
 while True:
-    theta_done = False
-    psi_done = False
+    done = False
     e = e + 1
     score = 0
     r = 0
@@ -49,7 +47,7 @@ while True:
     sB[4] = np.random.randint(-10, 10) * D2R
     theta_cmd = sB[1] + np.random.randint(-10, 10) * D2R
     psi_cmd = sB[4] + np.random.randint(-10, 10) * D2R
-    while not theta_done and not psi_done:
+    while not done:
         # Theta + Psi
         # Theta
         theta_Err = theta_cmd - sB[1]
@@ -124,8 +122,7 @@ while True:
         timer = timer + dt
 
         if timer > Epoch:
-            theta_done = True
-            psi_done = True
+            done = True
             # Theta
             if abs(theta_cmd - sB[1]) <= 2 * D2R and abs(psi_cmd - sB[4]) <= 2 * D2R:
                 scored = score
