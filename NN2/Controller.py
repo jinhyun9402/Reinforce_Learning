@@ -139,7 +139,7 @@ while True:
             scores.append(score)
             episodes.append(e)
 
-            print("episode:", e, " Score:", score, "(", scored, ")", " time:", round(timer),
+            print("episode:", e, " Score:", score, " time:", round(timer),
                   " theta cmd:", round(theta_cmd * R2D, 1), " Theta:", round(sB[1] * R2D, 1),
                   " psi cmd:", round(psi_cmd * R2D, 1), " Psi:", round(sB[4] * R2D, 1))
             if np.mean(scores[-min(10, len(scores)):]) >= 1000 and e > 10:
