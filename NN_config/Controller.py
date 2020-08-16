@@ -27,15 +27,16 @@ Blue_States[5] = 37 * D2R                # Latitude
 Blue_States[6] = 126 * D2R               # Longitude
 Blue_States[7] = 10000                   # Altitude
 
-EPISODES = 500
+EPISODES = 2
 Epoch = 10
 scores, episodes = [], []
-Agent = DQNController(4, 6)
+Agent = DQNController(6, 6)
 
 while True:
     done = False
     e = e + 1
     score = 0
+    scored = 0
     r = 0
     timer = 0
     mean = 0
@@ -43,8 +44,8 @@ while True:
     uB = [sB[3], sB[1], sB[2]]          # Command(Velocity, Alpha, Phi)
 
     # New Theta Angle
-    sB[1] = np.random.randint(-10, 10) * D2R
-    sB[4] = np.random.randint(-10, 10) * D2R
+    sB[1] = np.random.randint(-10, 10) * D2R    # Alpha random value
+    sB[4] = np.random.randint(-10, 10) * D2R    # Psi random value
     theta_cmd = sB[1] + np.random.randint(-10, 10) * D2R
     psi_cmd = sB[4] + np.random.randint(-10, 10) * D2R
     while not done:
@@ -64,9 +65,9 @@ while True:
             psi_Err = psi_Err + 360 * D2R
         Psi_States = [psi_Err, uB[2]]
 
-        DQN_states = [theta_Err, uB[1], psi_Err, uB[2]]
-        action_Theta_index, action_Psi_index = Agent.get_action(DQN_states)
-        action_index = [action_Theta_index, action_Psi_index]
+        DQN_states = [sB[1], theta_Err, uB[1], sB[4], psi_Err, uB[2]]
+        action_Theta_index, action_Phi_index = Agent.get_action(DQN_states)
+        action_index = [action_Theta_index, action_Phi_index]
 
         # Action 0 = Stay, 1 = +1deg Command, 2 = -1deg Command
         # Theta
@@ -75,13 +76,13 @@ while True:
         else:
             dtheta_Cmd = action_Theta_index
         # Psi
-        if action_Psi_index == 2:
-            dpsi_Cmd = -1
+        if action_Phi_index == 2:
+            dphi_Cmd = -1
         else:
-            dpsi_Cmd = action_Psi_index
+            dphi_Cmd = action_Phi_index
 
         uB[1] = uB[1] + dtheta_Cmd * D2R
-        uB[2] = uB[2] + dpsi_Cmd * D2R
+        uB[2] = uB[2] + dphi_Cmd * D2R
 
         # State Update
         snB = RK4Order(sB, uB, dt)
@@ -93,16 +94,16 @@ while True:
             theta_Err = theta_Err - 360 * D2R
         elif theta_Err < -math.pi:
             theta_Err = theta_Err + 360 * D2R
-        ThetaN_States = [theta_Err, uB[1]]
+        # ThetaN_States = [theta_Err, uB[1]]
         # Psi
         psi_Err = psi_cmd - snB[4]
         if psi_Err > math.pi:
             psi_Err = psi_Err - 360 * D2R
         elif psi_Err < -math.pi:
             psi_Err = psi_Err + 360 * D2R
-        PsiN_States = [psi_Err, uB[2]]
+        # PsiN_States = [psi_Err, uB[2]]
 
-        DQN_next_states = [theta_Err, uB[1], psi_Err, uB[2]]
+        DQN_next_states = [sB[1], theta_Err, uB[1], sB[4], psi_Err, uB[2]]
 
         r, done = RewardErr(theta_Err, psi_Err)
 
@@ -138,7 +139,7 @@ while True:
             scores.append(score)
             episodes.append(e)
 
-            print("episode:", e, " Score:", score, "(", round(scored), ")", " time:", round(timer),
+            print("episode:", e, " Score:", score, " time:", round(timer),
                   " theta cmd:", round(theta_cmd * R2D, 1), " Theta:", round(sB[1] * R2D, 1),
                   " psi cmd:", round(psi_cmd * R2D, 1), " Psi:", round(sB[4] * R2D, 1))
             if np.mean(scores[-min(10, len(scores)):]) >= 1000 and e > 10:

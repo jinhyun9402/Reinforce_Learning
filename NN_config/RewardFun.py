@@ -8,16 +8,16 @@ def RewardErr(theta_Err, psi_Err):
     Flag = False
     T = abs(theta_Err_deg)
     P = abs(psi_Err_deg)
-    if T <= 2:
-        if P <= 2:
+    if T <= 4:
+        if P <= 4:
             Reward = 1
         else:
             Reward = 1/P
-    elif T > 180 or P > 180:
+    elif T > 90 or P > 180:
         Reward = -1000
         Flag = True
     else:
-        if P <= 2:
+        if P <= 4:
             Reward = 1/T
         else:
             Reward = (1/T + 1/P)/2

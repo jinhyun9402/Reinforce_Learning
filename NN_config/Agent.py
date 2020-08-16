@@ -23,8 +23,8 @@ class DQNController:
         self.batch_size = 256
         self.train_start = 1000
 
-        # 리플레이 메모리, 최대 크기 2000
-        self.memory = deque(maxlen=4000)
+        # 리플레이 메모리
+        self.memory = deque(maxlen=3000)
 
         # 모델과 타깃 모델 생성
         self.model = self.build_model()
@@ -36,10 +36,10 @@ class DQNController:
     # 상태가 입력, 큐함수가 출력인 인공신경망 생성
     def build_model(self):
         input_tensor = layers.Input(shape=(self.state_size, ))
-        x = layers.Dense(40, activation='relu', kernel_initializer='he_uniform')(input_tensor)
-        x = layers.Dense(40, activation='relu', kernel_initializer='he_uniform')(x)
-        x = layers.Dense(40, activation='relu', kernel_initializer='he_uniform')(x)
-        x = layers.Dense(40, activation='relu', kernel_initializer='he_uniform')(x)
+        x = layers.Dense(40, activation='tanh', kernel_initializer='he_uniform')(input_tensor)
+        x = layers.Dense(40, activation='tanh', kernel_initializer='he_uniform')(x)
+        x = layers.Dense(40, activation='tanh', kernel_initializer='he_uniform')(x)
+        x = layers.Dense(40, activation='tanh', kernel_initializer='he_uniform')(x)
         output_tensor = layers.Dense(self.action_size, activation='relu', kernel_initializer='he_uniform')(x)
 
         model = models.Model(inputs=input_tensor, outputs=output_tensor)
