@@ -142,6 +142,6 @@ while True:
             print("episode:", e, " Score:", score, " time:", round(timer),
                   " theta cmd:", round(theta_cmd * R2D, 1), " Theta:", round(sB[1] * R2D, 1),
                   " psi cmd:", round(psi_cmd * R2D, 1), " Psi:", round(sB[4] * R2D, 1))
-            if np.mean(scores[-min(10, len(scores)):]) >= 1000 and e > 10:
+            if np.mean(scores[-min(20, len(scores)):]) >= 1000 and e > 10:
                 Agent.model.save("./save_model/DQN_ThetaPsi_Controller.h5")
                 sys.exit()
