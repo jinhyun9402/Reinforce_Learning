@@ -30,7 +30,7 @@ Blue_States[7] = 10000                   # Altitude
 EPISODES = 2
 Epoch = 10
 scores, episodes = [], []
-Agent = DQNController(6, 6)
+Agent = DQNController(4, 6)
 
 while True:
     done = False
@@ -49,7 +49,6 @@ while True:
     theta_cmd = sB[1] + np.random.randint(-10, 10) * D2R
     psi_cmd = sB[4] + np.random.randint(-10, 10) * D2R
     while not done:
-        # Theta + Psi
         # Theta
         theta_Err = theta_cmd - sB[1]
         if theta_Err > math.pi:
@@ -65,7 +64,7 @@ while True:
             psi_Err = psi_Err + 360 * D2R
         Psi_States = [psi_Err, uB[2]]
 
-        DQN_states = [sB[1], theta_Err, uB[1], sB[4], psi_Err, uB[2]]
+        DQN_states = [theta_Err, uB[1], psi_Err, uB[2]]
         action_Theta_index, action_Phi_index = Agent.get_action(DQN_states)
         action_index = [action_Theta_index, action_Phi_index]
 
@@ -103,7 +102,7 @@ while True:
             psi_Err = psi_Err + 360 * D2R
         # PsiN_States = [psi_Err, uB[2]]
 
-        DQN_next_states = [sB[1], theta_Err, uB[1], sB[4], psi_Err, uB[2]]
+        DQN_next_states = [theta_Err, uB[1], psi_Err, uB[2]]
 
         r, done = RewardErr(theta_Err, psi_Err)
 
@@ -125,7 +124,7 @@ while True:
         if timer > Epoch:
             done = True
             # Theta
-            if abs(theta_cmd - sB[1]) <= 10 * D2R and abs(psi_cmd - sB[4]) <= 10 * D2R:
+            if abs(theta_cmd - sB[1]) <= 3 * D2R and abs(psi_cmd - sB[4]) <= 3 * D2R:
                 scored = score
                 score = 1000
             else:
@@ -142,6 +141,6 @@ while True:
             print("episode:", e, " Score:", score, "(", scored, ")", " time:", round(timer),
                   " theta cmd:", round(theta_cmd * R2D, 1), " Theta:", round(sB[1] * R2D, 1),
                   " psi cmd:", round(psi_cmd * R2D, 1), " Psi:", round(sB[4] * R2D, 1))
-            if np.mean(scores[-min(10, len(scores)):]) >= 1000 and e > 10:
+            if np.mean(scores[-min(15, len(scores)):]) >= 1000 and e > 10:
                 Agent.model.save("./save_model/DQN_ThetaPsi_Controller.h5")
                 sys.exit()
